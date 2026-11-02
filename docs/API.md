@@ -1,14 +1,14 @@
-# API Reference
+# FinAgent API Reference
 
-Local development base URL: `http://127.0.0.1:8000`
+Base URL: `http://127.0.0.1:8000`
 
-Interactive OpenAPI documentation: `/docs`
+Interactive documentation: [Swagger UI](http://127.0.0.1:8000/docs)
 
 ## Health check
 
 `GET /`
 
-Example response:
+Returns the API service status.
 
 ```json
 {
@@ -17,29 +17,31 @@ Example response:
 }
 ```
 
-## Run the browser agent
+## Execute a browser task
 
 `POST /run-agent`
 
-### Request body
+Submits a natural-language goal and starts a browser-agent run.
+
+### Request fields
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `goal` | string | Yes | Non-empty natural-language task description. |
-| `start_url` | string | Yes | Non-empty page URL. Use the local demo URL. |
-| `biller` | string or null | No | Biller name to put in the demo form. |
-| `amount` | positive number or null | No | Positive amount to put in the demo form. |
-| `headless` | boolean | No | Run browser without a visible window. Defaults to `true`. |
-| `auto_confirm` | boolean | No | Permit the confirmation-gated demo click. Defaults to `false`. |
+| `goal` | string | Yes | Natural-language task to perform. |
+| `start_url` | string | Yes | URL of the page to open. |
+| `biller` | string or null | No | Biller name for the banking workflow. |
+| `amount` | positive number or null | No | Amount for the banking workflow. |
+| `headless` | boolean | No | Run the browser without a visible window. Default: `true`. |
+| `auto_confirm` | boolean | No | Allow confirmation-gated actions to proceed. Default: `false`. |
 
-### Example
+### Example request
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/run-agent" \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "Pay electricity bill to Demo Power for 250",
-    "start_url": "http://localhost:9000/",
+    "start_url": "http://127.0.0.1:9000/",
     "biller": "Demo Power",
     "amount": 250,
     "headless": false,
@@ -47,18 +49,20 @@ curl -X POST "http://127.0.0.1:8000/run-agent" \
   }'
 ```
 
-### Possible agent statuses
+### Response statuses
 
-| Status | Meaning |
+| Status | Description |
 | --- | --- |
-| `needs_input` | A biller or amount could not be resolved. |
-| `needs_confirmation` | The safety interceptor paused before the payment click. |
-| `needs_correction` | The page showed a message interpreted as an error. |
-| `success` | The demo page displayed a success message. |
-| `executed_script` | The action sequence completed without a detected success message. |
+| `needs_input` | Additional task details are required. |
+| `needs_confirmation` | The agent is waiting for confirmation before proceeding. |
+| `needs_correction` | The current page state requires correction. |
+| `success` | The requested workflow reached its success state. |
+| `executed_script` | The planned browser action sequence was executed. |
 
-These statuses describe the local demonstration only. A `success` response means the dummy page displayed a simulated success state; it does not represent a real transaction.
+## Browser configuration
 
-## Safety
+Use `headless: false` to watch the browser while a task runs. Use `headless: true` for background execution.
 
-Only test against the included dummy website or another local page you control. Do not send real banking credentials or financial information. The current keyword-based confirmation check is a prototype safeguard, not a production-grade authorization boundary.
+## Interactive documentation
+
+FastAPI automatically publishes the complete request schema and endpoint documentation at `/docs` and `/openapi.json`.
