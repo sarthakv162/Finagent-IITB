@@ -51,7 +51,6 @@ The current demo flow extracts a biller and amount from the request (or accepts 
 | `backend/app/agents/` | Agent loop, planner, safety interceptor, and Playwright executor |
 | `backend/app/models/schemas.py` | Typed action models |
 | `backend/app/utils/dom_distiller.py` | HTML-to-state distillation |
-| `backend/app/services/browser_service.py` | Reusable browser lifecycle helper |
 | `backend/requirements.txt` | Python dependencies |
 | `backend/.env.example` | Example local settings |
 | `bank_website/` | Dummy bank UI served locally |
@@ -124,6 +123,16 @@ With `auto_confirm` set to `false`, the agent returns `needs_confirmation` befor
 
 See [API documentation](docs/API.md) for the request and response contract.
 
+## Tests
+
+Install the project dependencies, then run:
+
+```bash
+pytest backend/tests -q
+```
+
+The tests cover action safety classification, DOM extraction, and API validation/health checks.
+
 ## Current limitations
 
 - The general-purpose planner's LLM call is a placeholder heuristic, not a connected language model.
@@ -134,7 +143,7 @@ See [API documentation](docs/API.md) for the request and response contract.
 
 ## Development
 
-Run the API and demo server in separate terminals as shown above. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
+Run the API and demo server in separate terminals as shown above. Convenience launch scripts are available in `scripts/`. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
 
 ## License
 
