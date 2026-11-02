@@ -1,36 +1,34 @@
 #!/usr/bin/env python3
-"""Simple HTTP server to serve the dummy bank website."""
+"""Serve the local dummy bank website on loopback only."""
 
-import os
 import http.server
+import os
 import socketserver
 
+HOST = "127.0.0.1"
 PORT = 9000
 
 
 class BankHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """Custom handler to serve files from the bank_website directory."""
-    
+    """Serve static files from this directory without browser caching."""
+
     def __init__(self, *args, **kwargs):
-        # Set the directory to serve files from
         super().__init__(*args, directory=os.path.dirname(__file__), **kwargs)
-    
+
     def end_headers(self):
-        # Add headers to prevent caching during development
-        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate')
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         super().end_headers()
 
 
-def run_server():
-    """Start the HTTP server."""
-    with socketserver.TCPServer(("", PORT), BankHTTPRequestHandler) as httpd:
-        print(f"🏦 SentinAL Dummy Bank server running at http://localhost:{PORT}")
-        print(f"📂 Serving files from: {os.path.dirname(os.path.abspath(__file__))}")
-        print("Press Ctrl+C to stop the server")
+def run_server() -> None:
+    """Start the dummy website on the local machine only."""
+    with socketserver.TCPServer((HOST, PORT), BankHTTPRequestHandler) as server:
+        print(f"FinAgent dummy bank running at http://{HOST}:{PORT}")
+        print("Press Ctrl+C to stop the server.")
         try:
-            httpd.serve_forever()
+            server.serve_forever()
         except KeyboardInterrupt:
-            print("\n\n🛑 Server stopped")
+            print("\nDummy bank server stopped.")
 
 
 if __name__ == "__main__":
