@@ -144,7 +144,7 @@ The tests cover action safety classification, DOM extraction, and API validation
 
 ## Development
 
-Run both local services together with `bash scripts/start_dev.sh` (Linux/macOS) or `scripts\\start_dev.bat` (Windows Command Prompt). The launcher creates `.venv`, installs dependencies, installs Chromium, and starts the dummy bank plus API. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
+Run both local services together with `bash scripts/start_dev.sh` (Linux/macOS) or `scripts/start_dev.bat` (Windows Command Prompt). The launcher creates `.venv`, installs dependencies, installs Chromium, and starts the dummy bank plus API. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
 
 ## License
 
