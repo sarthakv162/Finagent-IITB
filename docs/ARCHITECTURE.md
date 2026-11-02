@@ -23,7 +23,6 @@ FinAgent is organized as a FastAPI service, an asynchronous Playwright execution
 | `agents/safety_interceptor.py` | Keyword-based confirmation gate for selected click actions |
 | `agents/web_executor.py` | Browser lifecycle, navigation, and Playwright actions |
 | `utils/dom_distiller.py` | Reduces HTML into structured page information |
-| `services/browser_service.py` | Reusable browser lifecycle helper |
 | `bank_website/` | Local dummy banking interface |
 
 ## Implementation boundaries
