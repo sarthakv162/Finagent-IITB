@@ -13,7 +13,7 @@ Example response:
 ```json
 {
   "status": "ok",
-  "message": "Web Action Agent API running"
+  "message": "FinAgent API is running"
 }
 ```
 
@@ -25,10 +25,10 @@ Example response:
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `goal` | string | Yes | Natural-language task description. |
-| `start_url` | string | Yes | Page the browser should open. Use the local demo URL. |
+| `goal` | string | Yes | Non-empty natural-language task description. |
+| `start_url` | string | Yes | Non-empty page URL. Use the local demo URL. |
 | `biller` | string or null | No | Biller name to put in the demo form. |
-| `amount` | number or null | No | Amount to put in the demo form. |
+| `amount` | positive number or null | No | Positive amount to put in the demo form. |
 | `headless` | boolean | No | Run browser without a visible window. Defaults to `true`. |
 | `auto_confirm` | boolean | No | Permit the confirmation-gated demo click. Defaults to `false`. |
 
