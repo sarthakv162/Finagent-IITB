@@ -52,7 +52,6 @@ The current demo flow extracts a biller and amount from the request (or accepts 
 | `backend/app/models/schemas.py` | Typed action models |
 | `backend/app/utils/dom_distiller.py` | HTML-to-state distillation |
 | `backend/requirements.txt` | Python dependencies |
-| `backend/.env.example` | Example local settings |
 | `bank_website/` | Dummy bank UI served locally |
 | `docs/ARCHITECTURE.md` | Component responsibilities and execution flow |
 | `docs/API.md` | API contract and example requests |
@@ -143,7 +142,7 @@ The tests cover action safety classification, DOM extraction, and API validation
 
 ## Development
 
-Run the API and demo server in separate terminals as shown above. Convenience launch scripts are available in `scripts/`. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
+Run both local services together with `bash scripts/start_dev.sh` (Linux/macOS) or `scripts\\start_dev.bat` (Windows Command Prompt). The launcher creates `.venv`, installs dependencies, installs Chromium, and starts the dummy bank plus API. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
 
 ## License
 
