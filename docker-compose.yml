@@ -1,5 +1,0 @@
-# Optional: Docker orchestration
-version: '3.8'
-
-services:
-  # Add services here when needed
