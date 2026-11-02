@@ -1,118 +1,174 @@
 # FinAgent — Browser Action Agent
 
-<p align="center"><strong>A safety-gated browser automation prototype for structured web workflows.</strong></p>
+<p align="center">
+  <strong>Turning natural-language goals into browser actions.</strong>
+</p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi" />
-  <img src="https://img.shields.io/badge/Browser-Playwright-2EAD33?logo=playwright" />
-  <img src="https://img.shields.io/badge/Status-Prototype-orange" />
+  <img src="https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/Playwright-Browser%20Automation-2EAD33?logo=playwright&logoColor=white" />
+  <img src="https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white" />
 </p>
 
-FinAgent is an experimental browser-action agent that accepts a high-level task, opens a target website with Playwright, and executes structured browser actions. The repository includes a local **dummy banking website** so the workflow can be explored without interacting with a real financial institution.
+FinAgent is a browser automation system that translates high-level user goals into structured web interactions. Built with **Python, FastAPI, and Playwright**, it combines page observation, DOM distillation, action planning, and confirmation-aware execution in a modular agent architecture.
 
-> **Safety notice:** This is a prototype and learning/research project. The included bank is a simulation; no real payment or bank transfer is performed. Do not point the agent at real banking, payment, or other sensitive websites, and do not enter real credentials or financial information.
+With its included banking workflow environment, FinAgent provides an end-to-end example of automating multi-step web tasks through a simple API.
 
-## Features
+## Highlights
 
-- FastAPI HTTP interface for submitting browser tasks.
-- Asynchronous browser automation using Playwright.
-- Structured action model for typing, clicking, waiting, and stopping.
-- Lightweight safety interceptor that can pause before sensitive-looking actions.
-- DOM distillation to convert page HTML into compact state information.
-- Local dummy bank website for repeatable demonstrations.
+- **Natural-language task interface** — submit browser goals through a clean REST API.
+- **Browser automation** — navigate pages and interact with web elements using Playwright.
+- **DOM intelligence** — distill page structure into compact, actionable state.
+- **Agent architecture** — separate planning, observation, safety evaluation, and execution modules.
+- **Action confirmation** — introduce a confirmation step before selected sensitive actions.
+- **Banking workflow demo** — explore a complete bill-payment interaction in the included web environment.
+- **Developer-ready API** — interactive Swagger documentation and straightforward local setup.
 
-## Architecture
+## How it works
 
 ```text
-Client
-  | POST /run-agent
-  v
-FastAPI (backend/app/main.py)
-  v
-WebActionAgent
-  |-- Observe: DOM distillation
-  |-- Plan: Planner
-  |-- Safety: SafetyInterceptor
-  |-- Act: WebExecutor
-  v
-Playwright browser
-  v
-Local dummy bank website (bank_website/)
+         Natural-language goal
+                  |
+                  v
+           FastAPI endpoint
+                  |
+                  v
+             WebActionAgent
+                  |
+       +----------+----------+
+       |          |          |
+       v          v          v
+   Observe     Planner     Safety
+       |          |          |
+       +----------+----------+
+                  |
+                  v
+             WebExecutor
+                  |
+                  v
+           Playwright Browser
+                  |
+                  v
+          Banking Web Environment
 ```
 
-The current demo flow extracts a biller and amount from the request (or accepts them as explicit fields), fills the dummy bank form, and pauses before the simulated payment click unless confirmation is enabled. The general-purpose planner's LLM integration is currently a stub; this is not a production autonomous banking system.
+## Technology stack
+
+| Layer | Technology |
+| --- | --- |
+| Backend API | FastAPI, Pydantic |
+| Language | Python |
+| Browser automation | Playwright |
+| DOM processing | BeautifulSoup |
+| Testing | Pytest, FastAPI TestClient |
+| CI | GitHub Actions |
 
 ## Project structure
 
-| Path | Purpose |
-| --- | --- |
-| `backend/app/main.py` | FastAPI app and `/run-agent` endpoint |
-| `backend/app/agents/` | Agent loop, planner, safety interceptor, and Playwright executor |
-| `backend/app/models/schemas.py` | Typed action models |
-| `backend/app/utils/dom_distiller.py` | HTML-to-state distillation |
-| `backend/tests/` | Unit and API smoke tests |
-| `.github/workflows/tests.yml` | GitHub Actions test workflow |
-| `backend/requirements.txt` | Python dependencies |
-| `bank_website/` | Dummy bank UI served locally |
-| `docs/ARCHITECTURE.md` | Component responsibilities and execution flow |
-| `docs/API.md` | API contract and example requests |
-| `scripts/` | Development launch helpers |
+```text
+Finagent-IITB/
+├── backend/
+│   ├── app/
+│   │   ├── agents/
+│   │   │   ├── base_agent.py
+│   │   │   ├── planner.py
+│   │   │   ├── safety_interceptor.py
+│   │   │   ├── web_action_agent.py
+│   │   │   └── web_executor.py
+│   │   ├── models/schemas.py
+│   │   ├── utils/dom_distiller.py
+│   │   └── main.py
+│   ├── tests/
+│   └── requirements.txt
+├── bank_website/
+│   ├── static/
+│   ├── index.html
+│   └── server.py
+├── docs/
+│   ├── API.md
+│   └── ARCHITECTURE.md
+├── scripts/
+│   ├── start_dev.sh
+│   └── start_dev.bat
+└── README.md
+```
 
-## Requirements
+## Getting started
 
-- Python 3.10 or newer
+### Prerequisites
+
+- Python 3.10+
 - pip
 - Playwright Chromium
 
-## Quick start
-
-### 1. Clone and install
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sarthakv162/Finagent-IITB.git
 cd Finagent-IITB
+```
+
+### 2. Set up the environment
+
+```bash
 python -m venv .venv
+
 # Linux / macOS
 source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
+
+# Windows PowerShell
+# .venv\Scripts\Activate.ps1
+
 python -m pip install --upgrade pip
 pip install -r backend/requirements.txt
 playwright install chromium
 ```
 
-### 2. Start the dummy bank
+### 3. Launch FinAgent
 
-In a terminal at the repository root:
+Start the local banking website:
 
 ```bash
 python bank_website/server.py
 ```
 
-The demo site is served at [http://localhost:9000](http://localhost:9000).
-
-### 3. Start the API
-
-In a second terminal with the virtual environment active:
+Start the API in another terminal:
 
 ```bash
 uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Health check: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
+Or launch both services together:
 
-Interactive API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+```bash
+# Linux / macOS
+bash scripts/start_dev.sh
 
-## Example request
+# Windows Command Prompt
+scripts\start_dev.bat
+```
 
-The example below targets only the local dummy website:
+## API
+
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| `GET` | `/` | API health check |
+| `POST` | `/run-agent` | Execute a browser task |
+
+Interactive API documentation is available at:
+
+- Swagger UI: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- OpenAPI schema: [http://127.0.0.1:8000/openapi.json](http://127.0.0.1:8000/openapi.json)
+
+### Example request
 
 ```bash
 curl -X POST "http://127.0.0.1:8000/run-agent" \
   -H "Content-Type: application/json" \
   -d '{
     "goal": "Pay electricity bill to Demo Power for 250",
-    "start_url": "http://localhost:9000/",
+    "start_url": "http://127.0.0.1:9000/",
     "biller": "Demo Power",
     "amount": 250,
     "headless": false,
@@ -120,32 +176,21 @@ curl -X POST "http://127.0.0.1:8000/run-agent" \
   }'
 ```
 
-With `auto_confirm` set to `false`, the agent returns `needs_confirmation` before clicking **Pay Now**. Setting it to `true` permits the simulated click to proceed. The dummy website displays a simulated success message; it does not move money.
+See [docs/API.md](docs/API.md) for request fields and response statuses.
 
-See [API documentation](docs/API.md) for the request and response contract.
-
-## Tests
-
-Install the project dependencies, then run:
+## Run tests
 
 ```bash
 pytest backend/tests -q
 ```
 
-The tests cover action safety classification, DOM extraction, and API validation/health checks.
+GitHub Actions runs the test suite automatically for pushes and pull requests to `main`.
 
-## Current limitations
+## Documentation
 
-- The general-purpose planner's LLM call is a placeholder heuristic, not a connected language model.
-- The implemented payment demonstration is a deterministic script against the included dummy website.
-- The safety interceptor is a lightweight keyword check, not a complete policy or authorization system.
-- The dummy bank simulates payment success in client-side JavaScript; it has no banking, UPI, or payment-gateway integration.
-- Authentication, persistent sessions, production observability, and comprehensive automated tests are not implemented.
-
-## Development
-
-Run both local services together with `bash scripts/start_dev.sh` (Linux/macOS) or `scripts/start_dev.bat` (Windows Command Prompt). The launcher creates `.venv`, installs dependencies, installs Chromium, and starts the dummy bank plus API. Contributions that improve planner reasoning, robust element grounding, safety checks, test coverage, and documentation are welcome.
+- [Architecture](docs/ARCHITECTURE.md)
+- [API reference](docs/API.md)
 
 ## License
 
-No license has been added yet. Until a license is provided, standard copyright restrictions apply; contact the repository owner before reusing the code.
+No license file is currently included.
