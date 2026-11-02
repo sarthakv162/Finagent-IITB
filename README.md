@@ -51,6 +51,8 @@ The current demo flow extracts a biller and amount from the request (or accepts 
 | `backend/app/agents/` | Agent loop, planner, safety interceptor, and Playwright executor |
 | `backend/app/models/schemas.py` | Typed action models |
 | `backend/app/utils/dom_distiller.py` | HTML-to-state distillation |
+| `backend/tests/` | Unit and API smoke tests |
+| `.github/workflows/tests.yml` | GitHub Actions test workflow |
 | `backend/requirements.txt` | Python dependencies |
 | `bank_website/` | Dummy bank UI served locally |
 | `docs/ARCHITECTURE.md` | Component responsibilities and execution flow |
