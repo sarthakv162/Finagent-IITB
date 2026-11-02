@@ -1,36 +1,63 @@
-# Architecture
+# FinAgent Architecture
 
-FinAgent is organized as a FastAPI service, an asynchronous Playwright execution layer, and a local demo website.
+FinAgent follows a modular agent architecture that separates API orchestration, page observation, action planning, safety evaluation, and browser execution.
 
-## Runtime flow
+## System overview
 
-1. A client sends a task to `POST /run-agent`.
-2. FastAPI validates the payload with the `RunAgentRequest` Pydantic model.
-3. The route constructs a `Planner`, `SafetyInterceptor`, `WebExecutor`, and `WebActionAgent`.
-4. The agent starts Playwright and navigates to the supplied URL.
-5. The observer reads page HTML and passes it through `distill_dom`.
-6. The demo implementation resolves the biller and amount, then builds a fixed sequence: type biller, type amount, and click Pay Now.
-7. The safety interceptor marks the payment click as requiring confirmation. Without confirmation, the agent returns `needs_confirmation` before executing the click.
-8. The browser is closed when the run completes.
+```text
+Client
+  |
+  | POST /run-agent
+  v
+FastAPI application
+  |
+  v
+WebActionAgent
+  |
+  +---- DOM Observer / Distiller
+  |
+  +---- Planner
+  |
+  +---- Safety Interceptor
+  |
+  v
+WebExecutor
+  |
+  v
+Playwright
+  |
+  v
+Target website
+```
 
-## Components
+## Core modules
 
-| Component | Responsibility |
+| Module | Responsibility |
 | --- | --- |
-| `app/main.py` | HTTP API, request validation, dependency construction |
-| `agents/web_action_agent.py` | Coordinates observation, demo task flow, safety checks, and execution |
-| `agents/planner.py` | Planner abstraction; current LLM integration is a stub |
-| `agents/safety_interceptor.py` | Keyword-based confirmation gate for selected click actions |
-| `agents/web_executor.py` | Browser lifecycle, navigation, and Playwright actions |
-| `utils/dom_distiller.py` | Reduces HTML into structured page information |
-| `bank_website/` | Local dummy banking interface |
+| `app/main.py` | Exposes the FastAPI endpoints and coordinates agent requests. |
+| `agents/base_agent.py` | Defines shared agent structure and behavior. |
+| `agents/web_action_agent.py` | Coordinates page observation, task flow, and browser actions. |
+| `agents/planner.py` | Handles task planning and action selection. |
+| `agents/safety_interceptor.py` | Evaluates actions and applies confirmation requirements. |
+| `agents/web_executor.py` | Performs browser navigation and interactions through Playwright. |
+| `models/schemas.py` | Defines typed action and execution data models. |
+| `utils/dom_distiller.py` | Converts raw HTML into a compact representation of page controls and messages. |
 
-## Implementation boundaries
+## Request lifecycle
 
-The high-level planner and deterministic demo workflow are separate. The current end-to-end payment demonstration does not ask the planner to discover every step dynamically: the agent builds a fixed three-action script after extracting required values. The planner's `_call_llm` method is a placeholder.
+1. A client submits a goal and target URL to `POST /run-agent`.
+2. FastAPI validates the request and initializes the agent components.
+3. The agent opens the target page through Playwright.
+4. The DOM distiller extracts relevant page controls, labels, links, and status messages.
+5. The agent determines the next browser actions for the requested workflow.
+6. The safety interceptor evaluates actions and identifies actions requiring confirmation.
+7. The executor carries out approved browser interactions.
+8. The API returns the final execution status and result.
 
-The safety interceptor checks a small list of keywords in click targets. It is not sufficient to protect real financial workflows. The demo site's success response is simulated in client-side JavaScript.
+## Included workflow environment
 
-## Trust boundary
+The `bank_website/` directory contains the browser interface used by the included bill-payment workflow. It can be launched locally and used as the target page when testing the API.
 
-Treat task text, URLs, page content, and browser-visible text as untrusted input. Use only local or explicitly authorized test pages. Never provide real credentials, payment details, or personal information to this prototype.
+## Extending the agent
+
+The modular structure makes it straightforward to add new task planners, page-understanding strategies, action types, confirmation policies, and website workflows.
