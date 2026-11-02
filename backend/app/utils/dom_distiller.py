@@ -41,9 +41,10 @@ def distill_dom(html: str) -> Dict[str, List[Dict[str, Optional[str]]]]:
     label_map = _build_label_map(soup)
 
     buttons: List[Dict[str, Optional[str]]] = []
-    for btn in soup.find_all(["button", "input"], {
-        "type": ["button", "submit", "reset"]
-    }):
+    actionable_controls = soup.find_all("button") + soup.find_all(
+        "input", {"type": ["button", "submit", "reset"]}
+    )
+    for btn in actionable_controls:
         buttons.append(
             {
                 "role": btn.get("role", "button"),
