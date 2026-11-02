@@ -1,32 +1,32 @@
-# Python
+# Python bytecode and environments
 __pycache__/
 *.py[cod]
-*$py.class
 *.so
 .Python
+.venv/
 venv/
 env/
 ENV/
-.venv
 
-# Environment
+# Local secrets and environment overrides
 .env
+.env.*
 
-# IDE
+# IDE and editor files
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# Testing
+# Test and coverage artifacts
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Playwright
+# Playwright artifacts
 playwright-report/
 test-results/
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
